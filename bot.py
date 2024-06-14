@@ -1,29 +1,33 @@
 import discord
-from Functioneasy import token
-from bot_logic import gen_pass
+import os
+import random
+from discord.ext import commands
 
-# La variable intents almacena los privilegios del bot
 intents = discord.Intents.default()
-# Activar el privilegio de lectura de mensajes
 intents.message_content = True
-# Crear un bot en la variable cliente y transferirle los privilegios
-client = discord.Client(intents=intents)
 
-@client.event
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
 async def on_ready():
-    print(f'Hemos iniciado sesión como {client.user}')
+    print(f'We have logged in as {bot.user}')
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.content.startswith('$hello'):
-        await message.channel.send("Hi!")
-    elif message.content.startswith('$bye'):
-        await message.channel.send("\\U0001f642")
-    else:
-        await message.channel.send(message.content)
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Hola, soy un bot {bot.user}!')
 
-gen_pass(10)
+@bot.command()
+async def heh(ctx, count_heh = 5):
+    await ctx.send("he" * count_heh)
 
-client.run("")
+@bot.command()
+async def mem(ctx):
+    img_name = os.listdir('images')
+    name  = random.choice(img_name)
+
+    with open(f'images/{name}', 'rb') as f:
+        picture = discord.File(f)
+
+    await ctx.send(file=picture)  
+
+bot.run('')  
