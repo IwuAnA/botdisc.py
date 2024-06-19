@@ -1,6 +1,7 @@
 import discord
 import os
 import random
+import requests
 from discord.ext import commands
 
 intents = discord.Intents.default()
@@ -30,4 +31,29 @@ async def mem(ctx):
 
     await ctx.send(file=picture)  
 
-bot.run('')  
+@bot.command()
+async def animals(ctx):
+    img_name = os.listdir('animalimages')
+    name  = random.choice(img_name)
+
+    with open(f'animalimages/{name}', 'rb') as f:
+        picture = discord.File(f)
+
+    await ctx.send(file=picture)  
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+
+@bot.command('duck')
+async def duck(ctx):
+    '''Una vez que llamamos al comando duck, 
+    el programa llama a la función get_duck_image_url'''
+    image_url = get_duck_image_url()
+    await ctx.send(image_url)
+
+
+bot.run('') 
